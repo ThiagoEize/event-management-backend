@@ -1,0 +1,60 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Place {
+  id         Int       @id @default(autoincrement())
+  name       String
+  address    String
+  city       String
+  state      String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  events     Event[]
+  gates      Gate[]
+  turnstiles Turnstile[]
+
+  @@map("places")
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  placeId   Int
+  event     String
+  type      String
+  email     String
+  phone     String
+  dateStart DateTime
+  dateEnd   DateTime
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  place     Place    @relation(fields: [placeId], references: [id])
+
+  @@index([placeId])
+  @@map("events")
+}
+
+model Gate {
+  id       Int      @id @default(autoincrement())
+  name     String
+  placeId  Int 
+  place    Place    @relation(fields: [placeId], references: [id])
+
+  @@index([placeId])
+  @@map("gates")
+}
+
+model Turnstile {
+  id       Int      @id @default(autoincrement())
+  name     String
+  placeId  Int 
+  place    Place    @relation(fields: [placeId], references: [id])
+
+  @@index([placeId])
+  @@map("turnstiles")
+}
